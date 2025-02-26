@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up()
 {
-    Schema::create('genre_poster', function (Blueprint $table) {
+    Schema::create('parametr_miner', function (Blueprint $table) {
         $table->id();
-        $table->foreignId('genre_id')->constrained()->onDelete('cascade');
-        $table->foreignId('poster_id')->constrained()->onDelete('cascade');
+        $table->foreignId('parametr_id')->constrained()->onDelete('cascade');
+        $table->foreignId('miner_id')->constrained()->onDelete('cascade');
         $table->timestamps();
     });
 }
 
 public function down()
 {
-    Schema::dropIfExists('genre_poster');
+    Schema::dropIfExists('parametr_miner');
 }
 };

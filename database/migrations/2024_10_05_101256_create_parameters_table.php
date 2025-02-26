@@ -8,8 +8,9 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('genres', function (Blueprint $table) {
+        Schema::create('parameters', function (Blueprint $table) {
             $table->id();
+            $table->string('attribute', 50);
             $table->string('name', 50)->unique();
             $table->timestamps();
         });
@@ -17,6 +18,6 @@ return new class extends Migration
     
     public function down()
     {
-        Schema::dropIfExists('genres');
+        Schema::dropIfExists('parameters');
     }
 };

@@ -10,10 +10,10 @@
 
 <body class="bg-gray-100">
 
-    <!-- Movies Grid -->
+    <!-- Asic Grid -->
     <div class="container mx-auto px-4 py-8">
-        <h2 class="text-2xl font-bold mb-4">10 главных книг которые есть у всех</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        <h2 class="text-2xl font-bold mb-4">Каталог Asic майнеров</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             @foreach ($posts as $post)
                 <div class="bg-white shadow-lg rounded-lg overflow-hidden transform transition-transform hover:scale-105">
                     <a href="{{ route('Post', ['post_id' => $post->id]) }}">
@@ -33,4 +33,4 @@
             @endforeach
         </div>
     </div>
-    @endsection
+@endsection

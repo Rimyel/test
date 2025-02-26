@@ -47,7 +47,6 @@
         </div>
     </div>
 </div>
-{{-- Модальное окно --}}
 <div style="background-color: rgb(0, 0, 0, 0.4);" id="default-modal" tabindex="-1" aria-hidden="true"
     class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] h-screen">
     <div class="relative p-4 w-1/2 max-w-9xl max-h-9xl">
@@ -56,7 +55,7 @@
             <!-- Modal header -->
             <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
                 <h3 class="text-xl font-semibold text-gray-900">
-                    Добавление постера
+                    Добавление майнера
                 </h3>
                 <button type="button"
                     class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
@@ -66,12 +65,12 @@
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
                     </svg>
-                    <span class="sr-only">Закрыт</span>
+                    <span class="sr-only">Закрыть</span>
                 </button>
             </div>
 
             <!-- Modal body -->
-            <div class="p-4 md:p-5 space-y-4" x-data="{ selectedGenres: [] }">
+            <div class="p-4 md:p-5 space-y-4" x-data="{ selectedManufacturer: null, selectedAlgorithm: null, selectedCoin: null }">
                 <form class="max-w-md mx-auto" method="POST" action="{{ route('NewPoster') }}"
                     enctype="multipart/form-data">
                     @csrf
@@ -94,15 +93,40 @@
                             class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
                             aria-describedby="photo" name="photo" id="photo" type="file" required>
                     </div>
+
+                    <!-- Производитель -->
                     <div class="relative z-0 w-full mb-5 group">
-                        <label for="genres" class="block mb-2 text-sm font-medium text-gray-900">Жанры</label>
+                        <label class="block mb-2 text-sm font-medium text-gray-900">Производитель</label>
                         <div class="flex flex-wrap gap-2">
-                            @foreach ($genres as $genre)
-                                <button type="button" @click="selectedGenres.includes({{ $genre->id }}) ? selectedGenres = selectedGenres.filter(g => g !== {{ $genre->id }}) : selectedGenres.push({{ $genre->id }})" :class="{ 'bg-blue-500 text-white': selectedGenres.includes({{ $genre->id }}), 'bg-gray-200 text-gray-700': !selectedGenres.includes({{ $genre->id }}) }" class="px-3 py-1 rounded-full transition duration-300 ease-in-out hover:bg-blue-500 hover:text-white">{{ $genre->name }}</button>
+                            @foreach ($parameters->where('attribute', 'manufacturer') as $manufacturer)
+                                <button type="button" @click="selectedManufacturer = {{ $manufacturer->id }}" :class="{ 'bg-blue-500 text-white': selectedManufacturer === {{ $manufacturer->id }}, 'bg-gray-200 text-gray-700': selectedManufacturer !== {{ $manufacturer->id }} }" class="px-3 py-1 rounded-full transition duration-300 ease-in-out hover:bg-blue-500 hover:text-white">{{ $manufacturer->name }}</button>
                             @endforeach
                         </div>
-                        <input type="hidden" name="genres" :value="selectedGenres.join(',')">
+                        <input type="hidden" name="manufacturer" x-model="selectedManufacturer">
                     </div>
+
+                    <!-- Алгоритм -->
+                    <div class="relative z-0 w-full mb-5 group">
+                        <label class="block mb-2 text-sm font-medium text-gray-900">Алгоритм</label>
+                        <div class="flex flex-wrap gap-2">
+                            @foreach ($parameters->where('attribute', 'algorithm') as $algorithm)
+                                <button type="button" @click="selectedAlgorithm = {{ $algorithm->id }}" :class="{ 'bg-blue-500 text-white': selectedAlgorithm === {{ $algorithm->id }}, 'bg-gray-200 text-gray-700': selectedAlgorithm !== {{ $algorithm->id }} }" class="px-3 py-1 rounded-full transition duration-300 ease-in-out hover:bg-blue-500 hover:text-white">{{ $algorithm->name }}</button>
+                            @endforeach
+                        </div>
+                        <input type="hidden" name="algorithm" x-model="selectedAlgorithm">
+                    </div>
+
+                    <!-- Монета -->
+                    <div class="relative z-0 w-full mb-5 group">
+                        <label class="block mb-2 text-sm font-medium text-gray-900">Монета</label>
+                        <div class="flex flex-wrap gap-2">
+                            @foreach ($parameters->where('attribute', 'coin') as $coin)
+                                <button type="button" @click="selectedCoin = {{ $coin->id }}" :class="{ 'bg-blue-500 text-white': selectedCoin === {{ $coin->id }}, 'bg-gray-200 text-gray-700': selectedCoin !== {{ $coin->id }} }" class="px-3 py-1 rounded-full transition duration-300 ease-in-out hover:bg-blue-500 hover:text-white">{{ $coin->name }}</button>
+                            @endforeach
+                        </div>
+                        <input type="hidden" name="coin" x-model="selectedCoin">
+                    </div>
+
                     <button type="submit"
                         class="text-white bg-black hover:bg-slate-400 focus:ring-4 focus:outline-none focus:ring-slate-200 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Загрузить</button>
                 </form>
@@ -111,14 +135,6 @@
     </div>
 </div>
 
-<script>
-    function submitForm() {
-        const form = document.querySelector('form');
-        const genresInput = document.querySelector('input[name="genres"]');
-        const genresArray = genresInput.value.split(',');
-        genresInput.value = JSON.stringify(genresArray);
-        form.submit();
-    }
-</script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
 @endsection

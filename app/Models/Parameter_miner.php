@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class GenrePoster extends Model
+class Parameter_miner extends Model
 {
     use HasFactory;
-    protected $table = 'genre_poster'; // Указываем имя таблицы
+    protected $table = 'Parameter_miner'; // Указываем имя таблицы
 
     protected $fillable = [
         'genre_id',

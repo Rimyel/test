@@ -7,7 +7,6 @@ use App\Models\Poster;
 use App\Models\Comment;
 use App\Models\Like;
 use App\Models\View;
-use App\Models\Genre;
 use App\Models\User;
 use App\Models\Rating;
 use App\Models\Analytic;
@@ -42,7 +41,7 @@ class HomeController extends Controller
 
     public function post($post_id)
     {
-        $poster = Poster::with('genres')->findOrFail($post_id);
+        $poster = Poster::findOrFail($post_id);
         // Получаем постер по ID
 
 

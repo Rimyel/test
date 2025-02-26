@@ -1,16 +1,14 @@
 <?php
 use App\Http\Controllers\ExportController;
 use App\Http\Middleware\IsAdmin;
-use App\Http\Middleware\TrackPageViews;
 use Illuminate\Support\Facades\Route;
-use App\Models\Analytic;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 Auth::routes();
 
-Route::get('/', [App\Http\Controllers\HomeController::class, 'welcome'])->middleware([TrackPageViews::class])->name('welcome');
+Route::get('/', [App\Http\Controllers\HomeController::class, 'welcome'])->name('welcome');
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->middleware(['auth'])->name('home');
-Route::get('/see/what', [App\Http\Controllers\HomeController::class, 'see'])->middleware([TrackPageViews::class])->name('see');
+Route::get('/see/what', [App\Http\Controllers\HomeController::class, 'see'])->name('see');
 Route::get('/rating', [App\Http\Controllers\HomeController::class, 'rating'])->name('rating');
 
 Route::get('/post/{post_id}', [App\Http\Controllers\HomeController::class, 'post'])->middleware(['auth'])->name('Post');
