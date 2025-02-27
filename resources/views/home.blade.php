@@ -52,8 +52,14 @@
                                             <div class="p-4">
                                                 <h3 class="text-lg font-bold mb-2">{{ $name->poster->name }}</h3>
                                                 <div class="text-sm text-gray-500 mb-2">
-                                                    @foreach ($name->poster->genres as $genre)
-                                                        {{ $genre->name }}@if (!$loop->last), @endif
+                                                    @foreach ($name->poster->parameters as $parameter)
+                                                        @if ($parameter->attribute === 'manufacturer')
+                                                            <span class="font-semibold">Производитель:</span> {{ $parameter->name }}<br>
+                                                        @elseif ($parameter->attribute === 'algorithm')
+                                                            <span class="font-semibold">Алгоритм:</span> {{ $parameter->name }}<br>
+                                                        @elseif ($parameter->attribute === 'coin')
+                                                            <span class="font-semibold">Монета:</span> {{ $parameter->name }}<br>
+                                                        @endif
                                                     @endforeach
                                                 </div>
                                                 <a href="{{ route('Post', ['post_id' => $name->poster->id]) }}"

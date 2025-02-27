@@ -46,7 +46,7 @@ Route::put('/users/{id}', [App\Http\Controllers\UserController::class, 'update']
 Route::delete('/comments/{id}', [App\Http\Controllers\UserController::class, 'destroyComment'])->name('comments.destroy');
 
 
-Route::get('/liked/add/{product_id}', [App\Http\Controllers\HomeController::class, 'add_liked'])->name('ToLike')->middleware(['auth', 'verified']);
+Route::post('/liked/add/{product_id}', [App\Http\Controllers\HomeController::class, 'add_liked'])->name('ToLike')->middleware(['auth', 'verified']);
 Route::get('login/yandex', [App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'yandex'])->name('yandex');
 Route::get('login/yandex/redirect', [App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'yandexRedirect'])->name('yandexRedirect');
 

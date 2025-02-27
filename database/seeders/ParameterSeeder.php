@@ -3,17 +3,15 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Parameter;
+use App\Models\Parameter; // Импортируем класс Parameter
 
 class ParameterSeeder extends Seeder
 {
-    use App\Models\Parameter;
-
-public function run()
+    public function run()
 {
     $parameters = [
         ['attribute' => 'manufacturer', 'name' => 'Bitmain'],
-        ['attribute' => 'manufacturer', 'name' => 'Whatsminer'], // Это вызовет ошибку
+        ['attribute' => 'manufacturer', 'name' => 'Whatsminer'],
         ['attribute' => 'algorithm', 'name' => 'Scrypt'],
         ['attribute' => 'algorithm', 'name' => 'SHA-256'],
         ['attribute' => 'algorithm', 'name' => 'X11'],
@@ -24,9 +22,12 @@ public function run()
     ];
 
     foreach ($parameters as $parameter) {
-        Parameter::updateOrCreate(
-            ['attribute' => $parameter['attribute']], // Условие поиска
-            ['name' => $parameter['name']]          // Данные для обновления или создания
+        Parameter::firstOrCreate(
+            [
+                'attribute' => $parameter['attribute'], // Условие поиска по attribute
+                'name' => $parameter['name']           // Условие поиска по name
+            ],
+            $parameter // Данные для создания, если запись не найдена
         );
     }
 }

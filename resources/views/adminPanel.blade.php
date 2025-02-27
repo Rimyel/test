@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
 <div class="py-12 max-w-9xl mx-auto sm:px-6 lg:px-8">
-    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg px-9">
         <div class="p-6 text-gray-900">
             <h1 class="p-3 font-semibold">Постеры</h1>
             <button type="button" data-modal-target="default-modal" data-modal-toggle="default-modal"
@@ -18,33 +18,49 @@
                 </div>
             @endif
         </div>
-        <div
-            class="p-6 text-gray-900 grid grid-cols-1 sm:grid-cols-2  md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8 place-items-center">
-            @foreach ($posters as $post)
-                <div
-                    class="bg-white shadow-lg rounded-lg flex flex-col h-full overflow-hidden transform transition-all min-w-72 duration-300 hover:scale-105 hover:shadow-xl w-64 relative {{ $post->visibility == 0 ? 'border-4 border-red-500' : '' }}">
-                    <img src="{{ asset($post->image) }}" alt="Movie 1" class="w-full min-h-96 max-h-96 object-cover">
-                    <div class="p-4 min-h-56 relative">
-                        <h3 class="font-bold ">{{ $post->name }}</h3>
-
-                        <a href="{{ route('Post', ['post_id' => $post->id]) }}"
-                            class="text-blue-500 hover:underline">Подробнее</a>
-                        <div class="flex justify-center w-full gap-3 pt-3 absolute bottom-5 left-0">
-                            @if ($post->visibility == 1)
-                                <a href="{{ route('posthide', $post->id) }}" type="button"
-                                    class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2.5 text-center ">Скрыть</a>
-                            @else
-                                <a href="{{ route('postrestore', $post->id) }}" type="button"
-                                    class="text-green-700 hover:text-white border border-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-3 py-2.5 text-center">Восстановить</a>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 px-7">
+    @foreach ($posters as $post)
+        <div class="bg-white shadow-lg rounded-lg overflow-hidden transform transition-transform hover:scale-105 {{ $post->visibility == 0 ? 'border-4 border-red-500' : '' }}">
+            <a href="{{ route('Post', ['post_id' => $post->id]) }}">
+                <img src="{{ asset($post->image) }}" alt="Asic Miner" class="w-full h-96 object-cover">
+            </a>
+            <div class="p-4">
+                <h3 class="text-lg font-bold mb-2">{{ $post->name }}</h3>
+                <div class="text-sm text-gray-500 mb-2">
+                    @if ($post->parameters)
+                        @foreach ($post->parameters as $parameter)
+                            @if ($parameter->attribute === 'manufacturer')
+                                <span class="font-semibold">Производитель:</span> {{ $parameter->name }}<br>
+                            @elseif ($parameter->attribute === 'algorithm')
+                                <span class="font-semibold">Алгоритм:</span> {{ $parameter->name }}<br>
+                            @elseif ($parameter->attribute === 'coin')
+                                <span class="font-semibold">Монета:</span> {{ $parameter->name }}<br>
                             @endif
-                            <a href="{{ route('editPosts', ['post_id' => $post->id]) }}" type="button"
-                                data-modal-target="edit-modal" data-modal-toggle="edit-modal"
-                                class="text-yellow-400 hover:text-white border border-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-3 py-2.5 text-center">Редактировать</a>
-                        </div>
-                    </div>
+                        @endforeach
+                    @else
+                        <span class="text-gray-400">Параметры не указаны</span>
+                    @endif
                 </div>
-            @endforeach
+                <a href="{{ route('Post', ['post_id' => $post->id]) }}"
+                    class="text-blue-500 hover:underline">Подробнее</a>
+                
+                <!-- Кнопки редактирования и скрытия -->
+                <div class="flex justify-center w-full gap-3 pt-3">
+                    @if ($post->visibility == 1)
+                        <a href="{{ route('posthide', $post->id) }}" type="button"
+                            class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2.5 text-center">Скрыть</a>
+                    @else
+                        <a href="{{ route('postrestore', $post->id) }}" type="button"
+                            class="text-green-700 hover:text-white border border-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-3 py-2.5 text-center">Восстановить</a>
+                    @endif
+                    <a href="{{ route('editPosts', ['post_id' => $post->id]) }}" type="button"
+                        data-modal-target="edit-modal" data-modal-toggle="edit-modal"
+                        class="text-yellow-400 hover:text-white border border-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-3 py-2.5 text-center">Редактировать</a>
+                </div>
+            </div>
         </div>
+    @endforeach
+</div>
     </div>
 </div>
 <div style="background-color: rgb(0, 0, 0, 0.4);" id="default-modal" tabindex="-1" aria-hidden="true"
