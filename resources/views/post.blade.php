@@ -38,7 +38,7 @@
                     <div class="color-root-grey-light mb-5">
                         <p class="font-semibold text-gray-700">{{ $post->description }}</p>
                     </div>
-                    
+                    <div class="flex gap-4">
                     <!-- Форма для добавления/удаления из избранного -->
                     <form action="{{ route('ToLike', ['product_id' => $post->id]) }}" method="POST">
                         @csrf
@@ -54,6 +54,12 @@
                             </button>
                         @endif
                     </form>
+                     <!-- Новая кнопка -->
+                     <button onclick="openModal()"
+                                class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out">
+                            Связаться со специалистом
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -105,4 +111,69 @@
         </div>
     </div>
 </div>
+<!-- Модальное окно -->
+<div id="contactModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3 text-center">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">Связаться со специалистом</h3>
+            <form id="contactForm" method="POST" action="{{ route('contact.request') }}" class="mt-4">
+                @csrf
+                <input type="hidden" name="poster_id" value="{{ $post->id }}">
+                <div class="mb-4">
+                    <input type="tel" name="phone" id="phone" 
+                           class="w-full px-3 py-2 border rounded-md" 
+                           placeholder="Ваш телефон" 
+                           pattern="\+7\d{10}" 
+                           required>
+                    <p class="text-xs text-gray-500 mt-1">Формат: +71234567890</p>
+                </div>
+                <div class="flex justify-end space-x-3 mt-4">
+                    <button type="button" onclick="closeModal()"
+                            class="px-4 py-2 text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200">
+                        Отмена
+                    </button>
+                    <button type="submit" 
+                            class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                        Отправить
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+function openModal() {
+    document.getElementById('contactModal').classList.remove('hidden');
+}
+
+function closeModal() {
+    document.getElementById('contactModal').classList.add('hidden');
+}
+
+document.getElementById('contactForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    fetch(this.action, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({
+            phone: document.getElementById('phone').value,
+            poster_id: {{ $post->id }}
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.success) {
+            alert('Заявка успешно отправлена!');
+            closeModal();
+        } else {
+            alert('Ошибка: ' + data.message);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+});
+</script>
 @endsection

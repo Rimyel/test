@@ -17,10 +17,10 @@
                 </li>
                 <li class="flex items-center">
                     <a href="{{ route('see') }}" class="text-blue-600 relative group">
-                        Что почитать
+                        Что бы выбрать
                         <span
                             class="absolute left-0 right-0 bottom-[-5px] h-0.5 bg-blue-600 scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
-                    </a>
+                    </a>    
                 </li>
                 
                 @if (Auth::user() && Auth::user()->is_admin == 1)
@@ -31,6 +31,17 @@
         Админка
         <span class="absolute left-0 right-0 bottom-[-5px] h-0.5 bg-blue-600 scale-x-0 transition-transform duration-300 group-hover:scale-x-100"></span>
     </a>
+    <!-- Выпадающее меню -->
+    <div x-show="isAdminMenuOpen" 
+         @mouseenter="clearTimeout(timeoutId)" 
+         @mouseleave="timeoutId = setTimeout(() => { isAdminMenuOpen = false }, 500)"
+         class="absolute top-full left-0 bg-white shadow-lg rounded-md py-2 w-48 z-50">
+        <a href="{{ route('admin.requests') }}" 
+           class="block px-4 py-2 text-gray-700 hover:bg-blue-50 transition-colors">
+            Заявки
+        </a>
+        <!-- Другие пункты меню -->
+    </div>
 </li>
                 @endif
             </ul>

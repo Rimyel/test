@@ -1,59 +1,127 @@
 @extends('layouts.app')
 
+@section('title', 'Редактирование объявления')
+
 @section('content')
-<div class="py-12">
-    <div class="container">
-        <div class="container mx-5 mb-5">
-            <div class="flex justify-center">
-                <div class="w-full md:w-full">
-                    <div class="bg-white shadow-md rounded px-5 py-5 flex">
-                        <img src="{{ asset($poster->image) }}" alt="" class="rounded w-96 min-h-48 float-left" height="200">
-                        <div class="ml-5 w-full">
-                            <form action="{{ route('save_posts', ['poster_id' => $poster->id]) }}" method="POST">
-                                @csrf
-                                <input type="text" name="name" id="name" value="{{ $poster->name }}"
-                                    class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                                    required />
+<div class="py-8">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="p-6 bg-white border-b border-gray-200">
+                <div class="flex flex-col md:flex-row gap-8">
+                    <!-- Блок с изображением -->
+                    <div class="w-full md:w-1/3">
+                        <div class="relative group">
+                            <img src="{{ asset($poster->image) }}" alt="Изображение постера" 
+                                 class="rounded-lg shadow-md w-full h-64 object-cover transition-transform duration-300 hover:scale-105">
+                            <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <label class="cursor-pointer text-white">
+                                    <input type="file" class="hidden" name="image">
+                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Форма редактирования -->
+                    <div class="w-full md:w-2/3">
+                        <form action="{{ route('save_posts', ['poster_id' => $poster->id]) }}" method="POST" class="space-y-6">
+                            @csrf
+
+                            <!-- Основные поля -->
+                            <div>
+                                <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Название</label>
+                                <input type="text" name="name" id="name" value="{{ old('name', $poster->name) }}"
+                                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                    required>
+                            </div>
+
+                            <div>
+                                <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Описание</label>
                                 <textarea id="description" name="description" rows="4"
-                                    class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                                    placeholder="Введите описание" required>{{ $poster->description }}</textarea>
-                                <div class="mt-4">
-                                    <label class="block text-sm font-medium text-gray-700">Жанры:</label>
-                                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                                        @foreach ($genres as $genre)
-                                            <div class="flex items-center">
-                                                <input type="checkbox" name="genres[]" value="{{ $genre->id }}"
-                                                    class="form-checkbox h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                                                    id="genre-{{ $genre->id }}"
-                                                    {{ in_array($genre->id, $poster->genres->pluck('id')->toArray()) ? 'checked' : '' }}>
-                                                <label for="genre-{{ $genre->id }}" class="ml-2 block text-sm text-gray-900 cursor-pointer">{{ $genre->name }}</label>
-                                            </div>
+                                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                    required>{{ old('description', $poster->description) }}</textarea>
+                            </div>
+
+                            <!-- Параметры -->
+                            <div class="space-y-6">
+                                <!-- Производитель -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Производитель</label>
+                                    <select name="parameters[manufacturer]" 
+                                            class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                                        <option value="">Выберите производителя</option>
+                                        @foreach($parameters['manufacturer'] ?? [] as $manufacturer)
+                                            <option value="{{ $manufacturer->id }}" 
+                                                {{ $poster->parameters->contains($manufacturer->id) ? 'selected' : '' }}>
+                                                {{ $manufacturer->name }}
+                                            </option>
                                         @endforeach
-                                    </div>
+                                    </select>
                                 </div>
-                                <button type="submit"
-                                    class="mt-3 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Сохранить</button>
-                            </form>
-                            @if (session('success'))
-                                <div class="bg-green-500 text-white p-4 rounded mb-4">
-                                    {{ session('success') }}
-                                </div>  
-                            @endif
-                            @if ($errors->any())
-                                <div class="bg-red-500 text-white p-4 rounded">
-                                    <ul>
-                                        @foreach ($errors->all() as $error)
+
+                                <!-- Алгоритм -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Алгоритм</label>
+                                    <select name="parameters[algorithm]" 
+                                            class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                                        <option value="">Выберите алгоритм</option>
+                                        @foreach($parameters['algorithm'] ?? [] as $algorithm)
+                                            <option value="{{ $algorithm->id }}" 
+                                                {{ $poster->parameters->contains($algorithm->id) ? 'selected' : '' }}>
+                                                {{ $algorithm->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <!-- Монета -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Монета</label>
+                                    <select name="parameters[coin]" 
+                                            class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                                        <option value="">Выберите монету</option>
+                                        @foreach($parameters['coin'] ?? [] as $coin)
+                                            <option value="{{ $coin->id }}" 
+                                                {{ $poster->parameters->contains($coin->id) ? 'selected' : '' }}>
+                                                {{ $coin->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                
+                            </div>
+
+                            <!-- Сообщения об ошибках -->
+                            @if($errors->any())
+                                <div class="mt-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg">
+                                    <ul class="list-disc pl-5">
+                                        @foreach($errors->all() as $error)
                                             <li>{{ $error }}</li>
                                         @endforeach
                                     </ul>
                                 </div>
                             @endif
-                        </div>
+
+                            <!-- Сообщение об успехе -->
+                            @if(session('success'))
+                                <div class="mt-4 p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg">
+                                    {{ session('success') }}
+                                </div>
+                            @endif
+
+                            <!-- Кнопка сохранения -->
+                            <button type="submit" 
+                                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-[1.02]">
+                                Сохранить изменения
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 @endsection

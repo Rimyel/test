@@ -34,6 +34,8 @@ Route::middleware([IsAdmin::class])->group(function () {
         Route::get('/new_poster', 'showForm')->name('NewPosterForm'); // Модальное окно для создания постера
         Route::get('/admin/edit_poster/{post_id}', 'edit_poster')->name('editPosts'); // Редактирование постера
         Route::post('/admin/save_edit/{poster_id}', 'save_edit')->name('save_posts'); // Сохранить изменения постера
+        Route::get('/admin/requests', 'showRequests')->name('admin.requests');
+        
     });
 });
 
@@ -50,7 +52,9 @@ Route::post('/liked/add/{product_id}', [App\Http\Controllers\HomeController::cla
 Route::get('login/yandex', [App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'yandex'])->name('yandex');
 Route::get('login/yandex/redirect', [App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'yandexRedirect'])->name('yandexRedirect');
 
+Route::patch('/repair/{id}/status', [App\Http\Controllers\RepairController::class, 'updateStatus'])->name('repair.update-status');
 
-
+Route::post('/contact-request', [App\Http\Controllers\ContactController::class, 'store'])->name('contact.request');
+Route::post('/repair-request', [App\Http\Controllers\RepairController::class, 'store'])->name('repair.request');
 Route::get('/export/word', [ExportController::class, 'exportWord'])->name('export.word');
 Route::get('/export/excel', [ExportController::class, 'exportExcel'])->name('export.excel');

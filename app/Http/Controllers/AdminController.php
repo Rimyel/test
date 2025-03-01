@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\ContactRequest;
 use Illuminate\Http\Request;
 use App\Models\Poster;
 use App\Models\Parameter; // Используем модель Parameter вместо Genre
@@ -10,6 +10,7 @@ use App\Models\Comment;
 use App\Models\Rating;
 use App\Models\Analytic;
 use Carbon\Carbon;
+use App\Models\RepairRequest;
 use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
@@ -21,7 +22,16 @@ class AdminController extends Controller
         $posters = Poster::orderBy('created_at', 'DESC')->get();
         return view('adminPanel', ['posters' => $posters], compact('parameters'));
     }
+    // страница с заявками
+    public function showRequests()
+{
+    $consultations = ContactRequest::with(['user', 'poster'])->latest()->paginate(10);
+    $repairs = RepairRequest::with(['user'])
+        ->latest()
+        ->paginate(10, ['*'], 'repairs');
 
+    return view('requests', compact('consultations', 'repairs'));
+}
     // Форма создания постера
     public function showForm()
     {
@@ -111,67 +121,46 @@ class AdminController extends Controller
         return redirect()->back();
     }
 
-    // Форма редактирования постера
-    public function edit_poster($post_id)
-    {
-        $poster = Poster::where('id', $post_id)->first();
-        $parameters = Parameter::all(); // Получаем все параметры
-        return view('editPost', ['poster' => $poster, 'parameters' => $parameters]);
-    }
+    public function edit_poster($poster_id)
+{
+    $poster = Poster::with('parameters')->findOrFail($poster_id);
+    
+    // Группируем параметры по атрибуту
+    $parameters = Parameter::all()->groupBy('attribute');
+    
+    return view('editPost', compact('poster', 'parameters'));
+}
 
-    // Сохранение изменений постера
-    public function save_edit($poster_id, Request $request)
-    {
-        // Валидация входящих данных
-        $request->validate([
-            'name' => [
-                'string',
-                'max:255',
-                function ($attribute, $value, $fail) use ($poster_id) {
-                    $normalizedName = preg_replace('/\s+/', ' ', trim(strtolower($value)));
-                    $existingPoster = Poster::whereRaw('LOWER(REPLACE(name, " ", "")) = ?', [str_replace(' ', '', $normalizedName)])
-                        ->where('id', '!=', $poster_id)
-                        ->first();
+public function save_edit(Request $request, $poster_id)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'description' => 'required|string',
+        'parameters' => 'array',
+        'image' => 'sometimes|image|max:2048'
+    ]);
 
-                    if ($existingPoster) {
-                        $fail('Постер с таким названием уже существует.');
-                    }
-                },
-            ],
-            'description' => 'string',
-            'manufacturer' => 'required|exists:parameters,id', // Производитель
-            'algorithm' => 'required|exists:parameters,id',     // Алгоритм
-            'coin' => 'required|exists:parameters,id',          // Монета
-        ]);
+    $poster = Poster::findOrFail($poster_id);
 
-        // Находим постер по ID
-        $poster = Poster::find($poster_id);
+    // Обрабатываем параметры
+    $parameters = collect($request->parameters)
+        ->map(function ($items) {
+            return is_array($items) ? $items : [$items];
+        })
+        ->flatten()
+        ->filter()
+        ->unique()
+        ->toArray();
 
-        if (!$poster) {
-            return redirect()->back()->with('error', 'Постер не найден.');
-        }
+    $poster->parameters()->sync($parameters);
 
-        // Обновляем поля
-        if ($request->has('name')) {
-            $poster->name = $request->name;
-        }
+    $poster->update([
+        'name' => $request->name,
+        'description' => $request->description
+    ]);
 
-        if ($request->has('description')) {
-            $poster->description = $request->description;
-        }
-
-        $poster->save();
-
-        // Обновляем параметры
-        $poster->parameters()->sync([
-            $request->manufacturer, // Производитель
-            $request->algorithm,   // Алгоритм
-            $request->coin,        // Монета
-        ]);
-
-        return redirect()->back()->with('success', 'Постер успешно обновлён.');
-    }
-
+    return back()->with('success', 'Изменения успешно сохранены!');
+}
     // Аналитика
     public function stat()
     {
