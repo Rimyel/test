@@ -89,7 +89,7 @@
                         </button>
                     </form>
                     @foreach ($comments as $comment)
-                        <article class="mb-5 text-base bg-gray-200 rounded-lg">
+                        <article class="mb-5 p-4 text-base bg-gray-200 rounded-lg">
                             <footer class="flex justify-between items-center mb-2 w-max">
                                 <div class="flex items-center">
                                     <p class="inline-flex items-center mr-3 text-sm text-gray-900">

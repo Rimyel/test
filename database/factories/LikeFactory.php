@@ -5,7 +5,7 @@ use App\Models\Like;
 use App\Models\User;
 use App\Models\Poster;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\Genre;
+
 class LikeFactory extends Factory
 {
     /**

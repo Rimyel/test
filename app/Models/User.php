@@ -67,10 +67,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Like::class);
     }
-    public function repairs()
-{
-    return $this->hasMany(RepairRequest::class);
-}
+    public function repairRequests()
+    {
+        return $this->hasMany(RepairRequest::class);
+    }
 
 public function contactRequests()
 {

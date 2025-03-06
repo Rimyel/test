@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\ContactRequest;
 use Illuminate\Http\Request;
 use App\Models\Poster;
-use App\Models\Parameter; // Используем модель Parameter вместо Genre
+use App\Models\Parameter; 
 use App\Models\User;
 use App\Models\Comment;
 use App\Models\Rating;
