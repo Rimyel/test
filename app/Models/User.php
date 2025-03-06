@@ -67,4 +67,13 @@ class User extends Authenticatable
     {
         return $this->hasMany(Like::class);
     }
+    public function repairs()
+{
+    return $this->hasMany(RepairRequest::class);
+}
+
+public function contactRequests()
+{
+    return $this->hasMany(ContactRequest::class);
+}
 }

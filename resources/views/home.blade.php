@@ -40,6 +40,40 @@
             <i class="fas fa-tools mr-2"></i>Заявка на ремонт
         </button>
     </div>
+    <!-- Заявки на консультации -->
+    <div class="bg-white shadow-md rounded p-4">
+                            <h3 class="text-xl font-bold mb-4">Мои заявки на консультации</h3>
+                            @if($consultations->isEmpty())
+                                <p class="text-gray-500">Нет активных заявок на консультации</p>
+                            @else
+                                <div class="grid gap-4">
+                                    @foreach($consultations as $consultation)
+                                        <div class="border rounded-lg p-4">
+                                            <div class="flex justify-between items-start">
+                                                <div>
+                                                    <p class="font-semibold">
+                                                        <a href="{{ route('Post', $consultation->poster_id) }}" 
+                                                           class="text-blue-600 hover:underline">
+                                                            {{ $consultation->poster->name ?? 'Удаленный товар' }}
+                                                        </a>
+                                                    </p>
+                                                    <p class="text-sm text-gray-600">{{ $consultation->created_at->format('d.m.Y H:i') }}</p>
+                                                </div>
+                                                <div class="text-right">
+                                                    <p class="text-sm">
+                                                        <a href="tel:{{ $consultation->phone }}" class="text-blue-600 hover:underline">
+                                                            {{ $consultation->phone }}
+                                                        </a>
+                                                    </p>
+                                                    <p class="text-sm text-gray-600">Статус: {{ $consultation->status ?? 'В обработке' }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+                    </div>
                 </div>
 
                 <div class="posters-grid col-span-3">

@@ -20,7 +20,10 @@ class HomeController extends Controller
     public function index()
     {
         $like = Like::with('poster')->where('user_id', Auth::user()->id)->get();
-        return view('home', ['like' => $like]);
+        return view('home', ['like' => $like,
+       
+        'consultations' => $user->contactRequests()->latest()->get(),]);
+        
     }
 
     public function authenticated(Request $request, $user)
